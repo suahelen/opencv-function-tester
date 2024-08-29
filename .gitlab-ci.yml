@@ -15,3 +15,5 @@ deploy:
     - pixi run start  # Assuming you have a start command that runs your Streamlit app
   only:
     - main
+    - master
+    
