@@ -8,6 +8,7 @@ deploy:
   script:
     - pixi install
     - nohup pixi run start_win_docker > streamlit.log 2>&1 &
+    - apk add curl --no-cache
     - sleep 15
     - cat streamlit.log
     - if curl -s http://host.docker.internal:8501 > /dev/null; then
