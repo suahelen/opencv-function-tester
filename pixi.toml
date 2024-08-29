@@ -8,6 +8,7 @@ platforms = ["win-64", "linux-64"]
 
 [tasks]
 start = "streamlit run src/app.py --server.address 0.0.0.0 --server.port 8501"
+start_win_docker = "streamlit run src/app.py --server.address host.docker.internal --server.port 8501"
 
 [dependencies]
 python = ">=3.12.5,<4"
