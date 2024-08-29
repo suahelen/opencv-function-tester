@@ -1,0 +1,17 @@
+image: python:3.9
+
+stages:
+  - deploy
+
+before_script:
+  - curl -fsSL https://pixi.sh/install.sh | bash
+  - export PATH="/root/.pixi/bin:$PATH"
+  - pixi install
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the app"
+    - pixi run start  # Assuming you have a start command that runs your Streamlit app
+  only:
+    - main

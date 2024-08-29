@@ -3,10 +3,11 @@ name = "opencv_tester"
 version = "0.1.0"
 description = "Add a short description here"
 authors = ["Fabian Auf der Maur <fam@csem.ch>"]
-channels = ["conda-forge"]
+channels = ["conda-forge", "pypi"]
 platforms = ["win-64"]
 
 [tasks]
+start = "streamlit run src/app.py"
 
 [dependencies]
 python = ">=3.12.5,<4"
