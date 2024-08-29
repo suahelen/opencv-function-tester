@@ -1,10 +1,5 @@
 image: ghcr.io/prefix-dev/pixi:latest
 
-services:
-  - name: ghcr.io/prefix-dev/pixi:latest
-    alias: streamlit
-    command: ["pixi", "run", "start_win_docker"]
-
 stages:
   - deploy
 
@@ -12,11 +7,22 @@ deploy:
   stage: deploy
   script:
     - pixi install
-    - sleep 15  # Give Streamlit some time to start up
-    - apk add --no-cache curl
-    - curl -s http://streamlit:8501 > /dev/null && echo "Streamlit is accessible" || (echo "Cannot access Streamlit" && exit 1)
-    - echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" > streamlit.env
+    - nohup pixi run start_win_docker > streamlit.log 2>&1 &
+    - sleep 15
+    - cat streamlit.log
+    - if curl -s http://localhost:8501 > /dev/null; then
+        echo "Streamlit is accessible";
+        echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" > streamlit.env;
+      else
+        echo "Cannot access Streamlit";
+        cat streamlit.log;
+        exit 1;
+      fi
+    - cat streamlit.env
   artifacts:
+    paths:
+      - streamlit.env
+      - streamlit.log
     reports:
       dotenv: streamlit.env
   environment:
