@@ -1,5 +1,9 @@
 image: ghcr.io/prefix-dev/pixi:latest
 
+job_name:
+  tags:
+  - fam
+
 stages:
   - deploy
 
@@ -10,9 +14,9 @@ deploy:
     - nohup pixi run start_win_docker > streamlit.log 2>&1 &
     - sleep 15
     - cat streamlit.log
-    - if curl -s http://localhost:8501 > /dev/null; then
+    - if curl -s http://host.docker.internal:8501 > /dev/null; then
         echo "Streamlit is accessible";
-        echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" > streamlit.env;
+        echo "STREAMLIT_URL=http://host.docker.internal:8501" > streamlit.env;
       else
         echo "Cannot access Streamlit";
         cat streamlit.log;
@@ -27,4 +31,4 @@ deploy:
       dotenv: streamlit.env
   environment:
     name: streamlit
-    url: http://${CI_SERVER_HOST}:8501
+    url: http://host.docker.internal:8501
