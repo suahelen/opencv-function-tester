@@ -7,7 +7,7 @@ channels = ["conda-forge", "pypi"]
 platforms = ["win-64", "linux-64"]
 
 [tasks]
-start = "streamlit run src/app.py"
+start = "streamlit run src/app.py --server.address 0.0.0.0 --server.port 8501"
 
 [dependencies]
 python = ">=3.12.5,<4"
