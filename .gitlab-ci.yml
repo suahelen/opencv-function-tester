@@ -5,10 +5,25 @@ stages:
 
 deploy:
   stage: deploy
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
   script:
     - echo "Deploying the app"
     - pixi run start  # Assuming you have a start command that runs your Streamlit app
+    - sleep 10  # Give Streamlit some time to start up
+    - if pgrep -f "streamlit run"; then echo "Streamlit is running"; else echo "Streamlit failed to start" && exit 1; fi
+    - curl -s http://localhost:8501 > /dev/null && echo "Streamlit is accessible" || (echo "Cannot access Streamlit" && exit 1)
+    - echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" >> streamlit.env
+  artifacts:
+    paths:
+      - streamlit.log
+    reports:
+      dotenv: streamlit.env
+  environment:
+    name: streamlit
+    url: http://${CI_SERVER_HOST}:8501
+
   only:
     - main
     - master
-    
