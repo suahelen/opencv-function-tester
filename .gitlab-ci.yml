@@ -1,4 +1,4 @@
-image: ghcr.io/prefix-dev/pixi:latest
+image: python:3.9
 
 stages:
   - deploy
@@ -6,8 +6,8 @@ stages:
 deploy:
   stage: deploy
   script:
-    - pixi install
-    - nohup pixi run start > streamlit.log 2>&1 &
+    - pip install -r requirements.txt
+    - nohup python -m streamlit run src/app.py --server.address 0.0.0.0 --server.port 8501 > streamlit.log 2>&1 &
     - apt-get update && apt-get install -y curl
     - sleep 15
     - cat streamlit.log
