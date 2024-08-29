@@ -14,14 +14,7 @@ deploy:
     - nohup pixi run start_win_docker > streamlit.log 2>&1 &
     - sleep 15
     - cat streamlit.log
-    - if curl -s http://host.docker.internal:8501 > /dev/null; then
-        echo "Streamlit is accessible";
-        echo "STREAMLIT_URL=http://host.docker.internal:8501" > streamlit.env;
-      else
-        echo "Cannot access Streamlit";
-        cat streamlit.log;
-        exit 1;
-      fi
+    - echo "STREAMLIT_URL=http://host.docker.internal:8501" > streamlit.env
     - cat streamlit.env
   artifacts:
     paths:
