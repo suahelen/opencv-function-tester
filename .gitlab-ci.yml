@@ -3,7 +3,7 @@ image: ghcr.io/prefix-dev/pixi:latest
 services:
   - name: ghcr.io/prefix-dev/pixi:latest
     alias: streamlit
-    command: ["pixi", "run", "start__windocker"]
+    command: ["pixi", "run", "start_win_docker"]
 
 stages:
   - deploy
