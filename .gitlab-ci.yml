@@ -3,11 +3,6 @@ image: ghcr.io/prefix-dev/pixi:latest
 stages:
   - deploy
 
-before_script:
-  - curl -fsSL https://pixi.sh/install.sh | bash
-  - export PATH="/root/.pixi/bin:$PATH"
-  - pixi install
-
 deploy:
   stage: deploy
   script:
