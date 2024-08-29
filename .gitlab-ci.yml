@@ -15,7 +15,7 @@ deploy:
     - sleep 15  # Give Streamlit some time to start up
     - apk add --no-cache curl
     - curl -s http://streamlit:8501 > /dev/null && echo "Streamlit is accessible" || (echo "Cannot access Streamlit" && exit 1)
-    - echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" >> streamlit.env
+    - echo "STREAMLIT_URL=http://${CI_SERVER_HOST}:8501" > streamlit.env
   artifacts:
     reports:
       dotenv: streamlit.env
