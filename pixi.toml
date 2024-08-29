@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add a short description here"
 authors = ["Fabian Auf der Maur <fam@csem.ch>"]
 channels = ["conda-forge", "pypi"]
-platforms = ["win-64"]
+platforms = ["win-64", "linux-64"]
 
 [tasks]
 start = "streamlit run src/app.py"
