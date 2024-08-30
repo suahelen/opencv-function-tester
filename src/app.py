@@ -9,9 +9,8 @@ from utils import (
     save_current_state,
     revert_state,
     forward_state,
-    generate_parameter_ui,
+    get_ui_parameters,
 )
-
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -27,20 +26,21 @@ def main():
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
+        # If a new file is uploaded or session state is empty
         if "file" not in st.session_state or uploaded_file != st.session_state.file:
             image = Image.open(uploaded_file)
             image = np.array(image)
             logger.info(f"Image shape: {image.shape}")
 
+            # Handle different image types and convert to BGR
             if image.dtype == bool:
                 image = image.astype(np.uint8) * 255
 
-            if len(image.shape) == 2:
+            if len(image.shape) == 2:  # If grayscale, convert to BGR
                 image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-
-            if image.shape[2] == 4:
+            elif image.shape[2] == 4:  # If RGBA, convert to BGR
                 image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
-            else:
+            else:  # Assume RGB and convert to BGR
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
             st.session_state.image = image
@@ -49,23 +49,40 @@ def main():
                 uploaded_file  # Track the uploaded file in session state
             )
 
-    if st.session_state.image is not None:
-        selected_function = st.selectbox(
+    if "image" in st.session_state:
+        selected_function_string = st.selectbox(
             "Select OpenCV function", list(opencv_functions.keys())
         )
-        params = generate_parameter_ui(selected_function)
+
+        selected_function = opencv_functions[selected_function_string]
+        # Get UI parameters and secondary image if required
+        params, secondary_image = get_ui_parameters(selected_function)
 
         try:
-
             start = time.time()
+            current_img = st.session_state.image
+            # Process the image using the selected function
+            if secondary_image is not None:
+                processed_image = selected_function.process(
+                    current_img.copy(), secondary_image, **params
+                )
 
-            processed_image = opencv_functions[selected_function].process(
-                st.session_state.image.copy(), **params
-            )
+                st.image(
+                    cv2.cvtColor(secondary_image, cv2.COLOR_BGR2RGB),
+                    caption="Secondary Image",
+                    use_column_width=False,
+                )
+            elif current_img is not None:
+                processed_image = selected_function.process(
+                    current_img.copy(), **params
+                )
+            else:
+                st.error("Please upload an image to get started.")
+                return
 
             end = time.time()
 
-            # displaying the time taken to process the image
+            # Displaying the time taken to process the image
             st.write(f"Time taken to process the image: {end-start} seconds")
 
             # Make the image display wider
@@ -83,6 +100,7 @@ def main():
                     use_column_width=True,
                 )
 
+            # Control buttons
             col3, col4, col5 = st.columns(3)
             with col3:
                 if st.button("Revert", use_container_width=True):

@@ -1,11 +1,15 @@
 import streamlit as st
-from cv_functions import opencv_functions
-from enum import Enum
+import cv2
+import numpy as np
+from PIL import Image
 
 
-def generate_parameter_ui(selected_function):
-    param_info = opencv_functions[selected_function].get_params()
+def get_ui_parameters(selected_function):
     params = {}
+    param_info = selected_function.get_params()
+    secondary_input_required = "requires_secondary_image" in param_info
+    if secondary_input_required:
+        param_info.pop("requires_secondary_image")
 
     # Organize controls into rows with up to 3 columns
     param_names = list(param_info.keys())
@@ -14,11 +18,7 @@ def generate_parameter_ui(selected_function):
         for j, param in enumerate(param_names[i : i + 3]):
             config = param_info[param]
             with cols[j]:
-                if isinstance(config, list) and isinstance(config[0], Enum):  # Enums
-                    options = [e.name for e in config]
-                    selected = st.selectbox(param, options)
-                    params[param] = next(e for e in config if e.name == selected)
-                elif isinstance(config, list):  # Dropdown options
+                if isinstance(config, list):  # Dropdown options (including enums)
                     params[param] = st.selectbox(param, config)
                 elif isinstance(config, tuple):  # Sliders
                     min_val, max_val, default, step = config
@@ -30,7 +30,22 @@ def generate_parameter_ui(selected_function):
                 elif isinstance(config, float):  # Float inputs
                     params[param] = st.number_input(param, value=config, format="%.4f")
 
-    return params
+    secondary_image = None
+    if secondary_input_required:
+        st.write("Please upload a second image (if required by the function):")
+        uploaded_file_secondary = st.file_uploader(
+            "Choose a second image...", type=["jpg", "jpeg", "png"]
+        )
+
+        if uploaded_file_secondary is not None:
+            secondary_image = Image.open(uploaded_file_secondary)
+            secondary_image = np.array(secondary_image)
+            if secondary_image.shape[2] == 4:  # If the image has an alpha channel
+                secondary_image = cv2.cvtColor(secondary_image, cv2.COLOR_RGBA2BGR)
+            else:
+                secondary_image = cv2.cvtColor(secondary_image, cv2.COLOR_RGB2BGR)
+
+    return params, secondary_image
 
 
 def initialize_session_state():

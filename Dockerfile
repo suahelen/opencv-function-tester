@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y curl
 WORKDIR /app
 
 # Copy your project files
-COPY . .
+COPY /src/ /app
+COPY pixi.toml /app
 
 # Install dependencies using Pixi
 RUN pixi install
@@ -17,4 +18,4 @@ RUN pixi install
 EXPOSE 8501
 
 # Start Streamlit
-CMD ["pixi run start"]
+CMD ["pixi run app.py --server.address 0.0.0.0 --server.port 8501"]
