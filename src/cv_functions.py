@@ -15,6 +15,7 @@ from functions.shape_detection import ContourDetection, HoughLines, HoughCircles
 from functions.frequency_domain import FourierTransform, InverseFourierTransform
 from functions.histogram import (
     HistogramEqualization,
+    CLAHE,
     ColorSpaceConversion,
 )
 
@@ -49,6 +50,7 @@ opencv_functions = {
     "Fourier Transform": FourierTransform,
     "Inverse Fourier Transform": InverseFourierTransform,
     "Histogram Equalization": HistogramEqualization,
+    "CLAHE": CLAHE,
     "Color Space Conversion": ColorSpaceConversion,
     "Template Matching": TemplateMatching,
     "Fast Matcher": FastMatcher,

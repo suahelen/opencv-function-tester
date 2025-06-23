@@ -11,7 +11,7 @@ class Resize(CvFunction):
     @staticmethod
     def get_params():
         return {
-            "fx": (0.1, 10.0, 1.0, 0.1),  # Scale factor along the horizontal axis
-            "fy": (0.1, 10.0, 1.0, 0.1),  # Scale factor along the vertical axis
+            "fx": (0.01, 10.0, 1.0, 0.05),  # Scale factor along the horizontal axis
+            "fy": (0.01, 10.0, 1.0, 0.05),  # Scale factor along the vertical axis
             "interpolation": list(Interpolation),
         }

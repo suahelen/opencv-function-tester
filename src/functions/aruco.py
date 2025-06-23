@@ -15,14 +15,22 @@ class ArucoDetector(CvFunction):
             # if value is Enum() take value
             if isinstance(value, Enum):
                 value = value.value
-            setattr(detector_parameter, key, value)
+
+            if hasattr(detector_parameter, key):
+                setattr(detector_parameter, key, value)
+
+        if params.get("flipImage"):
+            gray = cv2.flip(gray, 1)
 
         detector = cv2.aruco.ArucoDetector(
             dictionary=aruco_dict, detectorParams=detector_parameter
         )
         corners, ids, _ = detector.detectMarkers(gray)
+
+        color = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
         if ids is not None:
-            image = cv2.aruco.drawDetectedMarkers(image, corners, ids)
+            image = cv2.aruco.drawDetectedMarkers(color, corners, ids)
         return image
 
     @staticmethod
@@ -63,6 +71,7 @@ class ArucoDetector(CvFunction):
             "useAruco3Detection": False,
             "minSideLengthCanonicalImg": (1, 100, 16, 1),
             "minMarkerLengthRatioOriginalImg": (0.0, 1.0, 0.01, 0.01),
+            "flipImage": False,
         }
 
 
@@ -88,9 +97,15 @@ class CharucoBoardDetector(CvFunction):
             # if value is Enum() take value
             if isinstance(value, Enum):
                 value = value.value
-            setattr(detector_parameter, key, value)
+
+            if hasattr(detector_parameter, key):
+                setattr(detector_parameter, key, value)
 
         detector = cv2.aruco.CharucoDetector(board, detectorParams=detector_parameter)
+
+        if params.get("flipImage"):
+            gray = cv2.flip(gray, 1)
+            image = cv2.flip(image, 1)
 
         corners, corner_ids, marker_corners, marker_ids = detector.detectBoard(gray)
 
@@ -145,4 +160,5 @@ class CharucoBoardDetector(CvFunction):
             "useAruco3Detection": False,
             "minSideLengthCanonicalImg": (1, 100, 16, 1),
             "minMarkerLengthRatioOriginalImg": (0.0, 1.0, 0.01, 0.01),
+            "flipImage": False,
         }

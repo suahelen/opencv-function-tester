@@ -17,9 +17,9 @@ class CannyEdgeDetection(CvFunction):
     @staticmethod
     def get_params():
         return {
-            "threshold1": (0, 255, 100, 1),
-            "threshold2": (0, 255, 200, 1),
-            "apertureSize": (3, 7, 3, 2),  # Should be 3, 5, or 7
+            "threshold1": (0, 10000, 100, 1),
+            "threshold2": (0, 10000, 200, 1),
+            "apertureSize": (3, 31, 3, 2),  # Should be 3, 5, or 7
             "L2gradient": False,
         }
 

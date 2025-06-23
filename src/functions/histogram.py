@@ -5,9 +5,31 @@ from .function import CvFunction
 
 
 class HistogramEqualization(CvFunction):
+    """Traditional histogram equalization for grayscale images."""
+    @staticmethod
+    def process(image):
+        # Check if image is already grayscale
+        if len(image.shape) == 3 and image.shape[2] == 3:
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = image
+        return cv2.equalizeHist(gray)
+
+    @staticmethod
+    def get_params():
+        return {}
+
+
+class CLAHE(CvFunction):
+    """Contrast Limited Adaptive Histogram Equalization."""
     @staticmethod
     def process(image, clip_limit=2.0, tile_grid_size=(8, 8)):
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Check if image is already grayscale
+        if len(image.shape) == 3 and image.shape[2] == 3:
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = image
+        
         clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
         return clahe.apply(gray)
 
