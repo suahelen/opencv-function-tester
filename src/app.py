@@ -3,7 +3,7 @@ import cv2
 import time
 import numpy as np
 from PIL import Image
-from cv_functions import opencv_functions
+from . import opencv_functions
 from utils import (
     initialize_session_state,
     save_current_state,
